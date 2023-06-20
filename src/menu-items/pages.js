@@ -17,9 +17,9 @@ const icons = {
 // ==============================|| EXTRA PAGES MENU ITEMS ||============================== //
 
 const pages = {
-  id: 'pages',
-  title: 'Pages',
-  // caption: 'Pages Caption',
+  // id: '',
+  // title: '',
+  // caption: '',
   type: 'group',
   children: [
     // {
@@ -27,7 +27,6 @@ const pages = {
     //   title: 'Authentication',
     //   type: 'collapse',
     //   icon: icons.IconKey,
-
     //   children: [
     //     {
     //       id: 'login3',
@@ -126,7 +125,7 @@ const pages = {
         },
         {
           id: 'newemployee',
-          title: 'Add New Emp',
+          title: 'Add New Employees',
           type: 'item',
           url: '/newemployee'
         }
@@ -135,18 +134,37 @@ const pages = {
     {
       id: 'leavemanagement',
       title: 'Leave Management',
-      type: 'item',
+      type: 'collapse',
       icon: icons.PermIdentityOutlinedIcon,
-      url: '/leavemanagement',
-    }
-    //   children: [
-    //     {
-    //       id: 'userlist',
-    //       title: 'User List',
-    //       type: 'item',
-    //       url: '/UserList'
-    //     },
-    //   ]
+    
+      children: [
+        {
+          id: 'leavetracker',
+          title: 'Leave Tracker',
+          type: 'item',
+          url: '/leavetracker'
+        },
+        {
+          id: 'attendancetracker',
+          title: 'Attendance Tracker',
+          type: 'item',
+          url: '/attendancetracker'
+        },
+        {
+          id: 'wfhtracker',
+          title: 'WFH Tracker',
+          type: 'item',
+          url: '/wfhtracker'
+        },
+      ]
+    },
+     {
+      id: 'performance',
+      title: 'Performance',
+      type: 'item',
+      icon: icons.IconKey,
+      url:'/performance',
+     }
      
   ]
 };
