@@ -17,6 +17,7 @@ import {
   Button,
   Divider,
 } from '@mui/material';
+import './CourseOverview.css'; // Import your CSS file
 import ArticleIcon from '@mui/icons-material/Article';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MovieIcon from '@mui/icons-material/Movie';
@@ -181,53 +182,69 @@ const MediaList = () => {
               ))}
             </Grid>
           </DialogContent>
-            {/* Speed Dial component */}
-      <SpeedDial
-        ariaLabel="Speed Dial"
-        icon={<SpeedDialIcon />}
-        onClose={() => setIsSpeedDialOpen(false)}
-        onOpen={() => setIsSpeedDialOpen(true)}
-        open={isSpeedDialOpen}
-        direction="up"
-        sx={{ position: 'fixed', bottom: 16, right: 16 }}
-      >
-        {speedDialActions.map((action) => (
-          <SpeedDialAction
-            key={action.name}
-            icon={action.icon}
-            tooltipTitle={action.name}
-            onClick={action.onClick}
-          />
-        ))}
-      </SpeedDial>
+          {/* Speed Dial component */}
+          <SpeedDial
+            ariaLabel="Speed Dial"
+            icon={<SpeedDialIcon />}
+            onClose={() => setIsSpeedDialOpen(false)}
+            onOpen={() => setIsSpeedDialOpen(true)}
+            open={isSpeedDialOpen}
+            direction="up"
+            sx={{ position: 'fixed', bottom: 16, right: 16 }}
+          >
+            {speedDialActions.map((action) => (
+              <SpeedDialAction
+                key={action.name}
+                icon={action.icon}
+                tooltipTitle={action.name}
+                onClick={action.onClick}
+              />
+            ))}
+          </SpeedDial>
         </Dialog>
       )}
 
-    
-
       {/* Form for adding video and course name */}
-      <Dialog open={isFormOpen} onClose={() => setIsFormOpen(false)}>
-        <DialogTitle>Add Video and Course Name</DialogTitle>
-        <DialogContent>
-          <div {...getRootProps()} style={{ border: '2px dashed #cccccc', padding: '20px', textAlign: 'center', cursor: 'pointer', marginBottom: '20px' }}>
-            <input {...getInputProps()} />
-            <p>Drag and drop a video file here, or click to select one</p>
-          </div>
-          <TextField
-            label="Course Name"
-            variant="outlined"
-            fullWidth
-            value={courseName}
-            onChange={(e) => setCourseName(e.target.value)}
-            sx={{ marginBottom: '20px' }}
-          />
-          <Button variant="contained" color="primary" onClick={handleFormSubmit}>
-            Add
-          </Button>
+      {isFormOpen && (
+        <div className="popup-form">
+          <IconButton
+            aria-label="close"
+            onClick={() => setIsFormOpen(false)}
+            sx={{ position: 'absolute', top: 8, right: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
           <Divider sx={{ my: '20px' }} />
-         
-        </DialogContent>
-      </Dialog>
+          <div>Add Video and Course Name</div>
+          <div>
+            <div
+              {...getRootProps()}
+              style={{
+                border: '2px dashed #cccccc',
+                padding: '20px',
+                textAlign: 'center',
+                cursor: 'pointer',
+                marginBottom: '20px',
+              }}
+            >
+              <input {...getInputProps()} />
+              <p>Drag and drop a video file here, or click to select one</p>
+            </div>
+            <TextField
+              label="Course Name"
+              variant="outlined"
+              fullWidth
+              value={courseName}
+              onChange={(e) => setCourseName(e.target.value)}
+              sx={{ marginBottom: '20px' }}
+            />
+            <Button variant="contained" color="primary" onClick={handleFormSubmit}>
+              Add
+            </Button>
+            <Divider sx={{ my: '20px' }} />
+          </div>
+        </div>
+      )}
     </MainCard>
   );
 };
