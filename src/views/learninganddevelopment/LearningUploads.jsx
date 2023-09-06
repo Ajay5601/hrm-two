@@ -35,11 +35,11 @@ const LearningUploads = () => {
 
   const handleCourseDescriptionChange = (e) => {
     const description = e.target.value;
-    if (description.split(' ').length <= 20) {
+    if (description.split(' ').length <= 17) {
       setCourseDescription(description);
       setErrors((prevErrors) => ({ ...prevErrors, courseDescription: '' }));
     } else {
-      setErrors((prevErrors) => ({ ...prevErrors, courseDescription: 'Description must be 20 words or less.' }));
+      setErrors((prevErrors) => ({ ...prevErrors, courseDescription: 'Description must be 17 words or less.' }));
     }
   };
 

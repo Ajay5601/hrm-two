@@ -14,12 +14,10 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   TextField,
-  Select,
-  MenuItem,
   Button
 } from '@mui/material';
 import './CourseOverview.css';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import SmartDisplayIcon from '@mui/icons-material/SmartDisplay';
 import ArticleIcon from '@mui/icons-material/Article';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MovieIcon from '@mui/icons-material/Movie';
@@ -27,6 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import MainCard from 'ui-component/cards/MainCard';
 import axios from 'axios';
 import ReactPlayer from 'react-player/lazy';
+import Select from 'react-select';
 
 const MediaList = () => {
   const [mediaList, setMediaList] = useState([]);
@@ -36,7 +35,7 @@ const MediaList = () => {
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formText, setFormText] = useState('');
-  const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
+  const [selectedVideoIndexes, setSelectedVideoIndexes] = useState([]);
 
   const fetchMediaList = async () => {
     try {
@@ -76,22 +75,28 @@ const MediaList = () => {
   const closeFormDialog = () => {
     setIsFormOpen(false);
     setFormText('');
-    setSelectedVideoIndex(null);
+    setSelectedVideoIndexes([]);
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (selectedVideoIndex !== null && selectedMedia && selectedMedia.videos) {
-      const selectedVideoUrl = selectedMedia.videos[selectedVideoIndex];
-      console.log(`Selected Video URL: ${selectedVideoUrl}`);
+    if (selectedVideoIndexes.length > 0 && selectedMedia && selectedMedia.videos) {
+      const selectedVideoUrls = selectedVideoIndexes.map((index) => selectedMedia.videos[index]);
+      console.log('Selected Video URLs:', selectedVideoUrls);
     }
     closeFormDialog();
   };
 
   return (
     <MainCard title="Media List">
-      <Dialog open={isVideoOpen} onClose={closeVideoDialog}>
-        <DialogContent>
+      <Dialog  open={isVideoOpen} onClose={closeVideoDialog} maxWidth="md" fullWidth>
+        <DialogTitle>
+          Video Player
+          <IconButton aria-label="close" onClick={closeVideoDialog} sx={{ position: 'absolute', top: 8, right: 8 }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent >
           <ReactPlayer
             controls={true}
             url={currentVideo}
@@ -107,7 +112,6 @@ const MediaList = () => {
           />
         </DialogContent>
       </Dialog>
-
       <Grid container spacing={3}>
         {mediaList.map((media) => (
           <Grid item xs={12} sm={4} md={4} key={media._id}>
@@ -177,34 +181,38 @@ const MediaList = () => {
 
       <Dialog open={isFormOpen} onClose={closeFormDialog}>
         <DialogTitle>Add Video Form</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ height: '300px', width: '400px' }}>
           <form onSubmit={handleFormSubmit}>
             <TextField
-              label="Video Name"
+              label="Module name"
               fullWidth
               variant="outlined"
               margin="normal"
               value={formText}
               onChange={(e) => setFormText(e.target.value)}
+              sx={{ marginBottom: '16px' }}
             />
             <Select
-              label="Select Video"
-              fullWidth
-              variant="outlined"
-              value={selectedVideoIndex}
-              onChange={(e) => setSelectedVideoIndex(e.target.value)}
-            >
-              <MenuItem value={null}>Select a Video</MenuItem>
-              {selectedMedia &&
-                selectedMedia.videos &&
-                selectedMedia.videos.map((videoUrl, index) => (
-                  
-                  <MenuItem key={index} value={index}>
-                    <PlayCircleIcon style={{ marginRight: '10px' }} />
-                    Video {index + 1}
-                  </MenuItem>
-                ))}
-            </Select>
+              isMulti
+              placeholder="Select Videos"
+              options={
+                selectedMedia && selectedMedia.videos
+                  ? selectedMedia.videos.map((videoUrl, index) => ({
+                      value: index,
+                      label: (
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <SmartDisplayIcon style={{ marginRight: '8px' }} /> {`Video ${index + 1}`}
+                        </div>
+                      )
+                    }))
+                  : []
+              }
+              value={selectedVideoIndexes.map((index) => ({ value: index, label: `Video ${index + 1}` }))}
+              onChange={(selectedOptions) => {
+                const selectedIndexes = selectedOptions.map((option) => option.value);
+                setSelectedVideoIndexes(selectedIndexes);
+              }}
+            />
 
             <IconButton aria-label="close" onClick={closeFormDialog} sx={{ position: 'absolute', top: 8, right: 8 }}>
               <CloseIcon />
