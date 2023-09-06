@@ -14,10 +14,12 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   TextField,
-  Button,
-  Divider,
+  Select,
+  MenuItem,
+  Button
 } from '@mui/material';
-import './CourseOverview.css'; // Import your CSS file
+import './CourseOverview.css';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import ArticleIcon from '@mui/icons-material/Article';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import MovieIcon from '@mui/icons-material/Movie';
@@ -25,7 +27,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import MainCard from 'ui-component/cards/MainCard';
 import axios from 'axios';
 import ReactPlayer from 'react-player/lazy';
-import { useDropzone } from 'react-dropzone';
 
 const MediaList = () => {
   const [mediaList, setMediaList] = useState([]);
@@ -34,8 +35,8 @@ const MediaList = () => {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [courseName, setCourseName] = useState('');
-  const [uploadedVideo, setUploadedVideo] = useState(null);
+  const [formText, setFormText] = useState('');
+  const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
 
   const fetchMediaList = async () => {
     try {
@@ -68,50 +69,27 @@ const MediaList = () => {
     setSelectedMedia(null);
   };
 
-  const handleDrop = (acceptedFiles) => {
-    // Handle the dropped video file
-    if (acceptedFiles.length > 0) {
-      setUploadedVideo(acceptedFiles[0]);
-    }
+  const openFormDialog = () => {
+    setIsFormOpen(true);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: handleDrop,
-    accept: 'video/*', // Allow only video files
-  });
-
-  // Speed Dial actions
-  const speedDialActions = [
-    {
-      icon: <ArticleIcon />,
-      name: 'Form',
-      onClick: () => {
-        setIsFormOpen(true);
-      },
-    },
-    {
-      icon: <VideoCallIcon />,
-      name: 'Add Video',
-      onClick: () => {
-        // Handle adding a video action here
-        // You can implement your logic for adding videos here
-      },
-    },
-  ];
-
-  const handleFormSubmit = () => {
-    // Handle form submission here, e.g., send courseName and uploadedVideo to your server
-    console.log('Course Name:', courseName);
-    console.log('Uploaded Video:', uploadedVideo);
-    // Reset form fields
-    setCourseName('');
-    setUploadedVideo(null);
+  const closeFormDialog = () => {
     setIsFormOpen(false);
+    setFormText('');
+    setSelectedVideoIndex(null);
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    if (selectedVideoIndex !== null && selectedMedia && selectedMedia.videos) {
+      const selectedVideoUrl = selectedMedia.videos[selectedVideoIndex];
+      console.log(`Selected Video URL: ${selectedVideoUrl}`);
+    }
+    closeFormDialog();
   };
 
   return (
     <MainCard title="Media List">
-      {/* Dialog for displaying videos */}
       <Dialog open={isVideoOpen} onClose={closeVideoDialog}>
         <DialogContent>
           <ReactPlayer
@@ -122,23 +100,19 @@ const MediaList = () => {
             config={{
               file: {
                 attributes: {
-                  controlsList: 'nodownload', // Remove the download button
-                },
-              },
+                  controlsList: 'nodownload'
+                }
+              }
             }}
           />
         </DialogContent>
       </Dialog>
 
-      {/* Grid of media items */}
       <Grid container spacing={3}>
         {mediaList.map((media) => (
           <Grid item xs={12} sm={4} md={4} key={media._id}>
             <Paper elevation={2} sx={{ maxWidth: 300, borderRadius: '12px', height: 300 }}>
-              <Card
-                onClick={() => openMediaDialog(media)}
-                style={{ cursor: 'pointer', height: '100%' }}
-              >
+              <Card onClick={() => openMediaDialog(media)} style={{ cursor: 'pointer', height: '100%' }}>
                 <CardMedia sx={{ height: 110 }} image={media.image} title={media.courseName} />
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
@@ -154,35 +128,30 @@ const MediaList = () => {
         ))}
       </Grid>
 
-      {/* Dialog for displaying selected media */}
       {selectedMedia && (
         <Dialog open={selectedMedia !== null} onClose={closeMediaDialog} fullScreen>
           <DialogTitle>
             All Uploaded Videos
-            <IconButton
-              aria-label="close"
-              onClick={closeMediaDialog}
-              sx={{ position: 'absolute', right: 8, top: 8 }}
-            >
+            <IconButton aria-label="close" onClick={closeMediaDialog} sx={{ position: 'absolute', right: 8, top: 8 }}>
               <CloseIcon />
             </IconButton>
           </DialogTitle>
           <DialogContent style={{ maxHeight: '70vh', overflowY: 'auto' }}>
             <Grid container spacing={0}>
-              {selectedMedia.videos.map((videoUrl, index) => (
-                <Grid item xs={12} key={index} style={{ marginBottom: '3px' }}>
-                  <MovieIcon
-                    onClick={() => openVideoDialog(videoUrl)}
-                    style={{ cursor: 'pointer', fontSize: 40 }}
-                  />
-                  <Typography variant="body2" sx={{ marginTop: 1 }}>
-                    Video {index + 1}
-                  </Typography>
-                </Grid>
-              ))}
+              {selectedMedia.videos ? (
+                selectedMedia.videos.map((videoUrl, index) => (
+                  <Grid item xs={12} key={index} style={{ marginBottom: '3px' }}>
+                    <MovieIcon onClick={() => openVideoDialog(videoUrl)} style={{ cursor: 'pointer', fontSize: 40 }} />
+                    <Typography variant="body2" sx={{ marginTop: 1 }}>
+                      Video {index + 1}
+                    </Typography>
+                  </Grid>
+                ))
+              ) : (
+                <Typography variant="body2">No videos available.</Typography>
+              )}
             </Grid>
           </DialogContent>
-          {/* Speed Dial component */}
           <SpeedDial
             ariaLabel="Speed Dial"
             icon={<SpeedDialIcon />}
@@ -192,59 +161,60 @@ const MediaList = () => {
             direction="up"
             sx={{ position: 'fixed', bottom: 16, right: 16 }}
           >
-            {speedDialActions.map((action) => (
-              <SpeedDialAction
-                key={action.name}
-                icon={action.icon}
-                tooltipTitle={action.name}
-                onClick={action.onClick}
-              />
-            ))}
+            <SpeedDialAction key="Form" icon={<ArticleIcon />} tooltipTitle="Form" onClick={openFormDialog} />
+            <SpeedDialAction
+              key="Add Video"
+              icon={<VideoCallIcon />}
+              tooltipTitle="Add Video"
+              onClick={() => {
+                // Handle adding a video action here
+                // You can implement your logic for adding videos here
+              }}
+            />
           </SpeedDial>
         </Dialog>
       )}
 
-      {/* Form for adding video and course name */}
-      {isFormOpen && (
-        <div className="popup-form">
-          <IconButton
-            aria-label="close"
-            onClick={() => setIsFormOpen(false)}
-            sx={{ position: 'absolute', top: 8, right: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-          <Divider sx={{ my: '20px' }} />
-          <div>Add Video and Course Name</div>
-          <div>
-            <div
-              {...getRootProps()}
-              style={{
-                border: '2px dashed #cccccc',
-                padding: '20px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                marginBottom: '20px',
-              }}
-            >
-              <input {...getInputProps()} />
-              <p>Drag and drop a video file here, or click to select one</p>
-            </div>
+      <Dialog open={isFormOpen} onClose={closeFormDialog}>
+        <DialogTitle>Add Video Form</DialogTitle>
+        <DialogContent>
+          <form onSubmit={handleFormSubmit}>
             <TextField
-              label="Course Name"
-              variant="outlined"
+              label="Video Name"
               fullWidth
-              value={courseName}
-              onChange={(e) => setCourseName(e.target.value)}
-              sx={{ marginBottom: '20px' }}
+              variant="outlined"
+              margin="normal"
+              value={formText}
+              onChange={(e) => setFormText(e.target.value)}
             />
-            <Button variant="contained" color="primary" onClick={handleFormSubmit}>
-              Add
+            <Select
+              label="Select Video"
+              fullWidth
+              variant="outlined"
+              value={selectedVideoIndex}
+              onChange={(e) => setSelectedVideoIndex(e.target.value)}
+            >
+              <MenuItem value={null}>Select a Video</MenuItem>
+              {selectedMedia &&
+                selectedMedia.videos &&
+                selectedMedia.videos.map((videoUrl, index) => (
+                  
+                  <MenuItem key={index} value={index}>
+                    <PlayCircleIcon style={{ marginRight: '10px' }} />
+                    Video {index + 1}
+                  </MenuItem>
+                ))}
+            </Select>
+
+            <IconButton aria-label="close" onClick={closeFormDialog} sx={{ position: 'absolute', top: 8, right: 8 }}>
+              <CloseIcon />
+            </IconButton>
+            <Button variant="contained" color="primary" type="submit" style={{ marginTop: '16px' }}>
+              Submit
             </Button>
-            <Divider sx={{ my: '20px' }} />
-          </div>
-        </div>
-      )}
+          </form>
+        </DialogContent>
+      </Dialog>
     </MainCard>
   );
 };
