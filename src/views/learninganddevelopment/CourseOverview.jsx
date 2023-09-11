@@ -14,7 +14,7 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   TextField,
-  Button
+  Button,
 } from '@mui/material';
 import './CourseOverview.css';
 import SmartDisplayIcon from '@mui/icons-material/SmartDisplay';
@@ -78,25 +78,36 @@ const MediaList = () => {
     setSelectedVideoIndexes([]);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (selectedVideoIndexes.length > 0 && selectedMedia && selectedMedia.videos) {
       const selectedVideoUrls = selectedVideoIndexes.map((index) => selectedMedia.videos[index]);
       console.log('Selected Video URLs:', selectedVideoUrls);
+
+      // Send a POST request to your backend to create a new video
+      try {
+        const response = await axios.post('http://localhost:3001/videos/create', {
+          moduleName: formText,
+          videoUrls: selectedVideoUrls,
+        });
+        console.log('Video data saved:', response.data);
+      } catch (error) {
+        console.error('Error saving video data:', error);
+      }
     }
     closeFormDialog();
   };
 
   return (
     <MainCard title="Media List">
-      <Dialog  open={isVideoOpen} onClose={closeVideoDialog} maxWidth="md" fullWidth>
+      <Dialog open={isVideoOpen} onClose={closeVideoDialog} maxWidth="md" fullWidth>
         <DialogTitle>
           Video Player
           <IconButton aria-label="close" onClick={closeVideoDialog} sx={{ position: 'absolute', top: 8, right: 8 }}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent >
+        <DialogContent>
           <ReactPlayer
             controls={true}
             url={currentVideo}
@@ -105,9 +116,9 @@ const MediaList = () => {
             config={{
               file: {
                 attributes: {
-                  controlsList: 'nodownload'
-                }
-              }
+                  controlsList: 'nodownload',
+                },
+              },
             }}
           />
         </DialogContent>
@@ -203,7 +214,7 @@ const MediaList = () => {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <SmartDisplayIcon style={{ marginRight: '8px' }} /> {`Video ${index + 1}`}
                         </div>
-                      )
+                      ),
                     }))
                   : []
               }
