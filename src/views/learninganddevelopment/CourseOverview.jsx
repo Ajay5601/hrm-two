@@ -36,6 +36,10 @@ const MediaList = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formText, setFormText] = useState('');
   const [selectedVideoIndexes, setSelectedVideoIndexes] = useState([]);
+  const [formErrors, setFormErrors] = useState({
+    moduleName: '',
+    selectedVideos: '',
+  });
 
   const fetchMediaList = async () => {
     try {
@@ -76,10 +80,50 @@ const MediaList = () => {
     setIsFormOpen(false);
     setFormText('');
     setSelectedVideoIndexes([]);
+    setFormErrors({
+      moduleName: '',
+      selectedVideos: '',
+    });
+  };
+
+  const handleFormTextChange = (e) => {
+    // Clear the module name error when the user starts typing
+    setFormErrors({ ...formErrors, moduleName: '' });
+    setFormText(e.target.value);
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const errors = {
+      moduleName: '',
+      selectedVideos: '',
+    };
+
+    if (formText.trim() === '') {
+      errors.moduleName = 'Module name is required';
+      isValid = false;
+    }
+
+    if (selectedVideoIndexes.length === 0) {
+      errors.selectedVideos = 'Please select at least one video';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate the form
+    const isValid = validateForm();
+
+    if (!isValid) {
+      return;
+    }
+
+    // Continue with form submission if all validations pass
     if (selectedVideoIndexes.length > 0 && selectedMedia && selectedMedia.videos) {
       const selectedVideoUrls = selectedVideoIndexes.map((index) => selectedMedia.videos[index]);
       console.log('Selected Video URLs:', selectedVideoUrls);
@@ -192,17 +236,31 @@ const MediaList = () => {
 
       <Dialog open={isFormOpen} onClose={closeFormDialog}>
         <DialogTitle>Add Video Form</DialogTitle>
-        <DialogContent sx={{ height: '300px', width: '400px' }}>
+        <DialogContent sx={{ height: '500px', width: '500px' }}>
           <form onSubmit={handleFormSubmit}>
+            {/* Display the ID as a non-editable field */}
+            <TextField
+              label="ID"
+              fullWidth
+              variant="outlined"
+              margin="normal"
+              value={selectedMedia ? selectedMedia._id : ''}
+              disabled // This makes the field non-editable
+              sx={{ marginBottom: '16px' }}
+            />
+
             <TextField
               label="Module name"
               fullWidth
               variant="outlined"
               margin="normal"
               value={formText}
-              onChange={(e) => setFormText(e.target.value)}
+              onChange={handleFormTextChange} 
+              error={!!formErrors.moduleName}
+              helperText={formErrors.moduleName}
               sx={{ marginBottom: '16px' }}
             />
+
             <Select
               isMulti
               placeholder="Select Videos"
@@ -222,8 +280,16 @@ const MediaList = () => {
               onChange={(selectedOptions) => {
                 const selectedIndexes = selectedOptions.map((option) => option.value);
                 setSelectedVideoIndexes(selectedIndexes);
+
+                // Clear the selected videos error when the user makes a selection
+                setFormErrors({ ...formErrors, selectedVideos: '' });
               }}
+              error={!!formErrors.selectedVideos}
             />
+
+            <Typography variant="body2" color="error">
+              {formErrors.selectedVideos}
+            </Typography>
 
             <IconButton aria-label="close" onClick={closeFormDialog} sx={{ position: 'absolute', top: 8, right: 8 }}>
               <CloseIcon />
