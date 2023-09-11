@@ -15,6 +15,8 @@ import {
   SpeedDialIcon,
   TextField,
   Button,
+  Snackbar,
+  SnackbarContent
 } from '@mui/material';
 import './CourseOverview.css';
 import SmartDisplayIcon from '@mui/icons-material/SmartDisplay';
@@ -26,6 +28,8 @@ import MainCard from 'ui-component/cards/MainCard';
 import axios from 'axios';
 import ReactPlayer from 'react-player/lazy';
 import Select from 'react-select';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const MediaList = () => {
   const [mediaList, setMediaList] = useState([]);
@@ -38,8 +42,10 @@ const MediaList = () => {
   const [selectedVideoIndexes, setSelectedVideoIndexes] = useState([]);
   const [formErrors, setFormErrors] = useState({
     moduleName: '',
-    selectedVideos: '',
+    selectedVideos: ''
   });
+  const [isSuccessSnackbarOpen, setIsSuccessSnackbarOpen] = useState(false);
+  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
 
   const fetchMediaList = async () => {
     try {
@@ -82,7 +88,7 @@ const MediaList = () => {
     setSelectedVideoIndexes([]);
     setFormErrors({
       moduleName: '',
-      selectedVideos: '',
+      selectedVideos: ''
     });
   };
 
@@ -96,7 +102,7 @@ const MediaList = () => {
     let isValid = true;
     const errors = {
       moduleName: '',
-      selectedVideos: '',
+      selectedVideos: ''
     };
 
     if (formText.trim() === '') {
@@ -123,23 +129,32 @@ const MediaList = () => {
       return;
     }
 
-    // Continue with form submission if all validations pass
-    if (selectedVideoIndexes.length > 0 && selectedMedia && selectedMedia.videos) {
-      const selectedVideoUrls = selectedVideoIndexes.map((index) => selectedMedia.videos[index]);
-      console.log('Selected Video URLs:', selectedVideoUrls);
+    try {
+      // Continue with form submission if all validations pass
+      if (selectedVideoIndexes.length > 0 && selectedMedia && selectedMedia.videos) {
+        const selectedVideoUrls = selectedVideoIndexes.map((index) => selectedMedia.videos[index]);
+        console.log('Selected Video URLs:', selectedVideoUrls);
 
-      // Send a POST request to your backend to create a new video
-      try {
+        // Send a POST request to your backend to create a new video
         const response = await axios.post('http://localhost:3001/videos/create', {
+          moduleId: selectedMedia._id,
           moduleName: formText,
-          videoUrls: selectedVideoUrls,
+          videoUrls: selectedVideoUrls
         });
+
         console.log('Video data saved:', response.data);
-      } catch (error) {
-        console.error('Error saving video data:', error);
+
+        // Show success snackbar
+        setIsSuccessSnackbarOpen(true);
       }
+    } catch (error) {
+      console.error('Error saving video data:', error);
+
+      // Show error snackbar
+      setIsErrorSnackbarOpen(true);
+    } finally {
+      closeFormDialog();
     }
-    closeFormDialog();
   };
 
   return (
@@ -160,9 +175,9 @@ const MediaList = () => {
             config={{
               file: {
                 attributes: {
-                  controlsList: 'nodownload',
-                },
-              },
+                  controlsList: 'nodownload'
+                }
+              }
             }}
           />
         </DialogContent>
@@ -238,16 +253,7 @@ const MediaList = () => {
         <DialogTitle>Add Video Form</DialogTitle>
         <DialogContent sx={{ height: '500px', width: '500px' }}>
           <form onSubmit={handleFormSubmit}>
-            {/* Display the ID as a non-editable field */}
-            <TextField
-              label="ID"
-              fullWidth
-              variant="outlined"
-              margin="normal"
-              value={selectedMedia ? selectedMedia._id : ''}
-              disabled // This makes the field non-editable
-              sx={{ marginBottom: '16px' }}
-            />
+            <div className="custom-id-display">Video ID</div>
 
             <TextField
               label="Module name"
@@ -255,7 +261,7 @@ const MediaList = () => {
               variant="outlined"
               margin="normal"
               value={formText}
-              onChange={handleFormTextChange} 
+              onChange={handleFormTextChange}
               error={!!formErrors.moduleName}
               helperText={formErrors.moduleName}
               sx={{ marginBottom: '16px' }}
@@ -272,7 +278,7 @@ const MediaList = () => {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                           <SmartDisplayIcon style={{ marginRight: '8px' }} /> {`Video ${index + 1}`}
                         </div>
-                      ),
+                      )
                     }))
                   : []
               }
@@ -300,6 +306,41 @@ const MediaList = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <Snackbar
+        open={isSuccessSnackbarOpen}
+        autoHideDuration={1000} // Adjust the duration as needed
+        onClose={() => setIsSuccessSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <SnackbarContent
+          sx={{ backgroundColor: '#43a047', alignItems: 'center', display: 'flex' }} // Align items and use flex display
+          message={
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <CheckCircleIcon sx={{ marginRight: 1, alignSelf: 'center' }} />
+              <span> course video Sucessfully added </span>
+            </div>
+          }
+        />
+      </Snackbar>
+
+      {/* Snackbar for error message */}
+      <Snackbar
+        open={isErrorSnackbarOpen}
+        autoHideDuration={1000} // Adjust the duration as needed
+        onClose={() => setIsErrorSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <SnackbarContent
+          sx={{ backgroundColor: '#d32f2f', alignItems: 'center', display: 'flex' }} // Align items and use flex display
+          message={
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <CancelIcon sx={{ marginRight: 1, alignSelf: 'center' }} /> {/* X icon with self-alignment */}
+              <span>Error submitting the form</span>
+            </div>
+          }
+        />
+      </Snackbar>
     </MainCard>
   );
 };
