@@ -52,7 +52,7 @@ const Signin = () => {
                     <StyledTextField label="Password" type="password" id="password" size="small" />
                   </StyledGrid>
                 </StyledGrid>
-                <StyledButton type="submit" fullWidth variant="contained">
+                <StyledButton type="submit" fullWidth variant="contained" component={Link} to="/dashboard/default">
                   Sign In
                 </StyledButton>
                 <Divider>
