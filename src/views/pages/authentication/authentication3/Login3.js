@@ -60,7 +60,7 @@ const Login = () => {
                         Don&apos;t have an account?
                         <Typography
                           component={Link}
-                          to="/pages/register/register3"
+                          to="/pages/register"
                           variant="subtitle1"
                           sx={{ textDecoration: 'none', color: theme.palette.secondary.dark }}
                         >

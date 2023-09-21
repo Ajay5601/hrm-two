@@ -59,7 +59,7 @@ const Register = () => {
                         Already have an account?
                         <Typography
                           component={Link}
-                          to="/pages/login/login3"
+                          to="/pages/login"
                           variant="subtitle1"
                           sx={{ textDecoration: 'none', color: theme.palette.secondary.dark }}
                         >

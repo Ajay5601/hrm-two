@@ -25,10 +25,10 @@ const LandingPage = () => {
                 organizational efficiency with us
               </p>
               <div className="hero-cta">
-                <Link className="button button-primary" to="/pages/register/register3">
+                <Link className="button button-primary" to="/pages/register">
                   Register now
                 </Link>
-                <Link className="button" to="/pages/login/login3">
+                <Link className="button" to="/pages/login">
                   Get Started
                 </Link>
               </div>

@@ -38,7 +38,7 @@ const FirebaseRegister = () => {
         setLastname('');
         setPassword('');
         setErr({});
-        navigate('/pages/login/login3');
+        navigate('/pages/login');
       }
     } catch (error) {
       if (error.name === 'ValidationError') {

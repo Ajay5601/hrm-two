@@ -53,7 +53,7 @@ const dispatch = useDispatch()
     dispatch({type:LOGGED_OUT})
     dispatch({type:USER_OR_NOT})
     localStorage.clear()
-    navigate('/pages/login/login3');
+    navigate('/pages/login');
     
   };
   const now = new Date();

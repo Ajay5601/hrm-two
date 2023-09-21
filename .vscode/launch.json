@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "http://localhost:3000/hrm/pages/login/login3",
+            "url": "http://localhost:3000/hrm/pages/login",
             "webRoot": "${workspaceFolder}"
         }
     ]
