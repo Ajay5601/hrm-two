@@ -11,9 +11,11 @@ import {
   StyledBox,
   FormContainer,
   StyledDiv,
+  StyledSign,
   StyledGrid,
   StyledTextField,
   StyledButton,
+  StyledOr,
   SocialMediaContainer,
   Separator,
   StyledText,
@@ -32,16 +34,17 @@ const Signin = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <SuperDiv>
-        <SuperContainer component="main" maxWidth="xs">
+        <SuperContainer component="main" >
           <CssBaseline />
           <StyledPaper>
             <StyledDiv>
               <Logo />
             </StyledDiv>
-
+<StyledSign>
             <Divider>
               <StyledTypography className="auth__name">Sign In</StyledTypography>
             </Divider>
+            </StyledSign>
             <StyledBox>
               <FormContainer>
                 <StyledGrid container spacing={2}>
@@ -52,12 +55,15 @@ const Signin = () => {
                     <StyledTextField label="Password" type="password" id="password" size="small" />
                   </StyledGrid>
                 </StyledGrid>
+                
                 <StyledButton type="submit" fullWidth variant="contained" component={Link} to="/dashboard/default">
                   Sign In
                 </StyledButton>
+                <StyledOr>
                 <Divider>
                   <Chip label="OR" />
                 </Divider>
+                </StyledOr>
                 <SocialMediaContainer>
                   <GoogleLogo />
 

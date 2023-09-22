@@ -46,7 +46,7 @@ export const SuperDiv = styled.div`
   justify-content: center;
 `;
 export const SuperContainer = styled(Container)`
- max-width:500px;
+ max-width:444px;
 
 `;
 
@@ -64,9 +64,13 @@ export const StyledPaper = styled(Paper)`
   
 `;
 export const StyledDiv = styled.div`
-margin-top: 5px;
+margin: 15px;
 display: flex;
 justify-content: center;
+`;
+export const StyledSign = styled.div`
+margin: 15px;
+
 `;
 
 export const StyledTypography = styled(Typography)`
@@ -132,6 +136,10 @@ export const StyledButton = styled(Button)`
   }
 `;
 
+export const StyledOr = styled.div`
+margin: 10px;
+
+`;
 export const SocialMediaContainer = styled.div`
   display: flex;
   justify-content: center;

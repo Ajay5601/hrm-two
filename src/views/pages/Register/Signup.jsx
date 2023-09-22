@@ -7,11 +7,13 @@ import {
   SuperDiv,
   SuperContainer,
   StyledPaper,
+  StyledSign,
   StyledTypography,
   StyledBox,
   FormContainer,
   StyledDiv,
   StyledGrid,
+  StyledOr,
   StyledTextField,
   StyledButton,
   SocialMediaContainer,
@@ -32,16 +34,17 @@ const Signup = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <SuperDiv>
-        <SuperContainer component="main" >
+        <SuperContainer component="main">
           <CssBaseline />
           <StyledPaper>
             <StyledDiv>
               <Logo />
             </StyledDiv>
-
-            <Divider>
-              <StyledTypography className="auth__name">Sign up</StyledTypography>
-            </Divider>
+            <StyledSign>
+              <Divider>
+                <StyledTypography className="auth__name">Sign up</StyledTypography>
+              </Divider>
+            </StyledSign>
             <StyledBox>
               <FormContainer>
                 <StyledGrid container spacing={2}>
@@ -61,9 +64,11 @@ const Signup = () => {
                 <StyledButton type="submit" fullWidth variant="contained" component={Link} to="/pages/login">
                   Sign Up
                 </StyledButton>
+                <StyledOr>
                 <Divider>
                   <Chip label="OR" />
                 </Divider>
+                </StyledOr>
                 <SocialMediaContainer>
                   <GoogleLogo />
 
@@ -76,6 +81,7 @@ const Signup = () => {
                 </StyledGrid>
                 <StyledGrid item xs={12}>
                   <StyledRoute>
+                    
                     <StyledText>Already have an account?</StyledText>
                     <StyledText sm={6} component={Link} to="/pages/login">
                       Signin
