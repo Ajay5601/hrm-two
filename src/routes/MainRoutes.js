@@ -35,6 +35,7 @@ import Feedback from 'views/performance/Feedback/Feedback';
 import SkillsetMatrix from 'views/performance/SkillSet/SkillsetMatrix';
 import InterviewBoard from 'views/recruitment/InterviewBoard';
 import ApplicationView1 from 'views/recruitment/ApplicationView1';
+import { FeedSelectedTable } from 'views/recruitment/FeedSelectedTable';
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 
@@ -193,7 +194,12 @@ const MainRoutes = {
     {
       path: '/managerapproval/:id',
       element: <ManagerApproval />
-    }  
+    },
+    {
+      path: '/FeedSelectedTable',
+      element: <FeedSelectedTable />
+    }
+    
   ]
 };
 
