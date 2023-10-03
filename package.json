@@ -83,7 +83,7 @@
     "redux-persist": "^6.0.0",
     "redux-thunk": "^2.4.2",
     "styled-components": "^5.3.11",
-    "sweetalert2": "^11.7.23",
+    "sweetalert2": "^11.7.31",
     "xlsx": "^0.18.5",
     "yup": "^0.32.11"
   },
