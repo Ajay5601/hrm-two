@@ -31,7 +31,7 @@ const LeaveTab = () => {
         <Tab  label="Request Leave" />
         <Tab label="View Leave " />
         <Tab label="Leave Caleneder" />
-        <Tab label="Leave" />
+        <Tab label="Leave Card" />
       </Tabs>
       {renderTabContent()}
     </div>
